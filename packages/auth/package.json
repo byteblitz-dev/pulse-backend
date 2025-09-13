@@ -1,0 +1,22 @@
+{
+  "name": "@repo/auth",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "exports" : {
+    "./passport" : "./dist/passport.js",
+    "./middleware" : "./dist/middleware.js",
+    "./config" : "./dist/config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@repo/typescript-config" : "workspace:*",
+    "@repo/db" : "workspace:*"
+  }
+}
