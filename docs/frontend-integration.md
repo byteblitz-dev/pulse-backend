@@ -10,7 +10,7 @@ Complete integration examples for Flutter mobile apps and React/Next.js web dash
 // config/api_config.dart
 class ApiConfig {
   static const String baseUrl = 'http://localhost:4000'; // Development
-  // static const String baseUrl = 'https://your-railway-app.railway.app'; // Production
+  // static const String baseUrl = 'https://backend-production-e915.up.railway.app'; // Production
   
   static const Map<String, String> headers = {
     'Content-Type': 'application/json',
@@ -258,7 +258,7 @@ class _TestScreenState extends State<TestScreen> {
 // config/api.ts
 export const API_CONFIG = {
   baseUrl: process.env.NODE_ENV === 'production' 
-    ? 'https://your-railway-app.railway.app'
+    ? 'https://backend-production-e915.up.railway.app'
     : 'http://localhost:4000',
   headers: {
     'Content-Type': 'application/json',
@@ -502,8 +502,8 @@ FLUTTER_API_URL=http://localhost:4000
 
 ```bash
 # .env.production
-REACT_APP_API_URL=https://your-railway-app.railway.app
-FLUTTER_API_URL=https://your-railway-app.railway.app
+REACT_APP_API_URL=https://backend-production-e915.up.railway.app
+FLUTTER_API_URL=https://backend-production-e915.up.railway.app
 ```
 
 ## Error Handling Best Practices

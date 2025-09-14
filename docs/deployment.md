@@ -88,7 +88,7 @@ If Railway doesn't auto-detect your configuration:
 
 1. Railway will automatically build and deploy your application
 2. Monitor the deployment logs in the Railway dashboard
-3. Your backend will be available at `https://your-app-name.railway.app`
+3. Your backend will be available at `https://backend-production-e915.up.railway.app`
 
 ### Monitoring Deployment
 
@@ -127,7 +127,7 @@ Test that your deployment is working:
 
 ```bash
 # Test health check
-curl https://your-app-name.railway.app/health
+curl https://backend-production-e915.up.railway.app/health
 
 # Expected response
 {
@@ -141,7 +141,7 @@ curl https://your-app-name.railway.app/health
 
 ```bash
 # Test athlete registration
-curl -X POST https://your-app-name.railway.app/auth/athlete/signup \
+curl -X POST https://backend-production-e915.up.railway.app/auth/athlete/signup \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test User",

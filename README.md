@@ -114,6 +114,10 @@ packages/
 
 The server will start at `http://localhost:4000`
 
+## 🌐 Production Backend
+
+The backend is deployed and available at: **https://backend-production-e915.up.railway.app**
+
 ## 📚 Documentation
 
 For detailed information, see the [docs](docs/) folder:

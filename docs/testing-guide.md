@@ -4,9 +4,13 @@ Complete testing instructions for all Pulse Backend API endpoints using cURL and
 
 ## Prerequisites
 
-- Backend server running on `http://localhost:4000`
+- Backend server running on `http://localhost:4000` (development) or `https://backend-production-e915.up.railway.app` (production)
 - cURL or Postman installed
 - Valid test data
+
+## Production Testing
+
+For production testing, replace `http://localhost:4000` with `https://backend-production-e915.up.railway.app` in all examples below.
 
 ## Health Check
 
@@ -622,7 +626,7 @@ curl -X POST http://localhost:4000/auth/athlete/signup \
 
 1. **Create a new Postman Collection** named "Pulse Backend API"
 2. **Set up Environment Variables**:
-   - `base_url`: `http://localhost:4000`
+   - `base_url`: `http://localhost:4000` (development) or `https://backend-production-e915.up.railway.app` (production)
    - `athlete_token`: (set after login)
    - `official_token`: (set after login)
 3. **Use variables in requests**:

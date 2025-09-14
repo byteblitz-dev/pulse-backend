@@ -2,6 +2,10 @@
 
 Complete reference for all environment variables used in the Pulse Backend.
 
+## Production Backend URL
+
+The backend is deployed and available at: **https://backend-production-e915.up.railway.app**
+
 ## Required Variables
 
 ### DATABASE_URL

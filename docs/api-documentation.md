@@ -5,7 +5,7 @@ Complete reference for all Pulse Backend API endpoints.
 ## Base URL
 
 - **Development**: `http://localhost:4000`
-- **Production**: `https://your-railway-app.railway.app`
+- **Production**: `https://backend-production-e915.up.railway.app`
 
 ## Authentication
 
