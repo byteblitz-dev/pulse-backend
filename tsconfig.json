@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@repo/auth/*": ["packages/auth/src/*"],
+      "@repo/db/*": ["packages/db/src/*"],
+      "@repo/typescript-config/*": ["packages/typescript-config/*"]
+    }
+  },
+  "references": [
+    { "path": "./packages/auth" },
+    { "path": "./packages/db" },
+    { "path": "./packages/typescript-config" },
+    { "path": "./apps/backend" }
+  ]
+}
