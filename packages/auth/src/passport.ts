@@ -5,9 +5,6 @@ import bcrypt from "bcrypt";
 import { prisma } from "@repo/db/client";
 import { JWT_SECRET } from "./config";
 
-// ---------- Local Strategies ----------
-
-// Athlete
 passport.use(
   "athlete-local",
   new LocalStrategy(
@@ -28,7 +25,6 @@ passport.use(
   )
 );
 
-// Official
 passport.use(
   "official-local",
   new LocalStrategy(
@@ -49,13 +45,10 @@ passport.use(
   )
 );
 
-// ---------- JWT Strategies ----------
-
 interface JWTPayload {
   sub: string;
 }
 
-// Athlete JWT
 passport.use(
   "athlete-jwt",
   new JwtStrategy(
@@ -75,7 +68,6 @@ passport.use(
   )
 );
 
-// Official JWT
 passport.use(
   "official-jwt",
   new JwtStrategy(

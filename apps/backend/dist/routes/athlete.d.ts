@@ -1,4 +1,4 @@
 import { Router } from "express";
 declare const router: Router;
 export default router;
-//# sourceMappingURL=auth.d.ts.map
+//# sourceMappingURL=athlete.d.ts.map

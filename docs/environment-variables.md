@@ -1,4 +1,4 @@
-# 🔧 Environment Variables
+# Environment Variables
 
 Complete reference for all environment variables used in the Pulse Backend.
 
@@ -10,14 +10,14 @@ The backend is deployed and available at: **https://backend-production-e915.up.r
 
 ### DATABASE_URL
 - **Description**: PostgreSQL connection string
-- **Required**: ✅ Yes
+- **Required**: Yes
 - **Format**: `postgresql://username:password@host:port/database`
 - **Example**: `postgresql://user:pass@localhost:5432/pulse_db`
 - **Usage**: Used by Prisma to connect to the database
 
 ### JWT_SECRET
 - **Description**: Secret key for JWT token signing and verification
-- **Required**: ✅ Yes
+- **Required**: Yes
 - **Format**: String (minimum 32 characters recommended)
 - **Example**: `your-super-secret-jwt-key-here-make-it-long-and-random`
 - **Usage**: Used by Passport.js for JWT authentication
@@ -25,7 +25,7 @@ The backend is deployed and available at: **https://backend-production-e915.up.r
 
 ### OPENAI_API_KEY
 - **Description**: OpenAI API key for AI feedback generation
-- **Required**: ✅ Yes
+- **Required**: Yes
 - **Format**: `sk-...` (OpenAI API key format)
 - **Example**: `sk-your-openai-api-key-here`
 - **Usage**: Used by the GenAI service to generate performance feedback
@@ -35,21 +35,21 @@ The backend is deployed and available at: **https://backend-production-e915.up.r
 
 ### NODE_ENV
 - **Description**: Environment mode
-- **Required**: ❌ No
+- **Required**: No
 - **Default**: `development`
 - **Values**: `development`, `production`, `test`
 - **Usage**: Determines CORS origins, error message detail, and other environment-specific behavior
 
 ### FRONTEND_URL
 - **Description**: Frontend URL for CORS configuration
-- **Required**: ❌ No
+- **Required**: No
 - **Default**: `http://localhost:3000`
 - **Example**: `https://your-frontend-domain.com`
 - **Usage**: Used by CORS middleware to allow requests from the frontend
 
 ### PORT
 - **Description**: Server port number
-- **Required**: ❌ No
+- **Required**: No
 - **Default**: `4000`
 - **Example**: `3000`, `8000`, `4000`
 - **Usage**: Port where the Express server will listen

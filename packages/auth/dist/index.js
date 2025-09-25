@@ -14,7 +14,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Re-export all auth modules
 __exportStar(require("./passport"), exports);
 __exportStar(require("./middleware"), exports);
 __exportStar(require("./config"), exports);

@@ -1,4 +1,4 @@
-# 📱 Frontend Integration Guide
+# Frontend Integration Guide
 
 Complete integration examples for Flutter mobile apps and React/Next.js web dashboards.
 
@@ -31,19 +31,29 @@ class AuthService {
   
   // Athlete Registration
   static Future<Map<String, dynamic>> registerAthlete({
-    required String name,
+    required String firstName,
+    required String lastName,
     required String email,
+    required String phone,
+    required DateTime dateOfBirth,
+    required int age,
+    required String gender,
+    required String sport,
     required String password,
-    int? age,
   }) async {
     final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/auth/athlete/signup'),
+      Uri.parse('${ApiConfig.baseUrl}/athlete/signup'),
       headers: ApiConfig.headers,
       body: jsonEncode({
-        'name': name,
+        'firstName': firstName,
+        'lastName': lastName,
         'email': email,
+        'phone': phone,
+        'dateOfBirth': dateOfBirth.toIso8601String(),
+        'age': age,
+        'gender': gender,
+        'sport': sport,
         'password': password,
-        if (age != null) 'age': age,
       }),
     );
     
@@ -60,7 +70,7 @@ class AuthService {
     required String password,
   }) async {
     final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/auth/athlete/signin'),
+      Uri.parse('${ApiConfig.baseUrl}/athlete/signin'),
       headers: ApiConfig.headers,
       body: jsonEncode({
         'email': email,
@@ -87,48 +97,170 @@ class AuthService {
 }
 ```
 
-### Data Service
+### Test Data Service
 
 ```dart
-// services/data_service.dart
+// services/test_service.dart
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'auth_service.dart';
 
-class DataService {
-  // Store Test Result
-  static Future<Map<String, dynamic>> storeTestResult({
-    required String testType,
-    required Map<String, dynamic> metrics,
+class TestService {
+  // Store Standardized Test
+  static Future<Map<String, dynamic>> storeStandardizedTest({
+    required DateTime testDate,
+    required double height,
+    required double weight,
+    required Map<String, dynamic> sitAndReach,
+    required Map<String, dynamic> standingVerticalJump,
+    required Map<String, dynamic> standingBroadJump,
+    required Map<String, dynamic> medicineBallThrow,
+    required Map<String, dynamic> sprint30m,
+    required Map<String, dynamic> shuttleRun4x10m,
+    required Map<String, dynamic> situps,
+    Map<String, dynamic>? run800m,
+    Map<String, dynamic>? run1600m,
   }) async {
     final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/data/store'),
+      Uri.parse('${ApiConfig.baseUrl}/athlete/tests/standardized'),
       headers: AuthService.getAuthHeaders(),
       body: jsonEncode({
-        'testType': testType,
-        'metrics': metrics,
+        'testDate': testDate.toIso8601String(),
+        'height': height,
+        'weight': weight,
+        'sitAndReach': sitAndReach,
+        'standingVerticalJump': standingVerticalJump,
+        'standingBroadJump': standingBroadJump,
+        'medicineBallThrow': medicineBallThrow,
+        'sprint30m': sprint30m,
+        'shuttleRun4x10m': shuttleRun4x10m,
+        'situps': situps,
+        if (run800m != null) 'run800m': run800m,
+        if (run1600m != null) 'run1600m': run1600m,
       }),
     );
     
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to store result: ${response.body}');
+      throw Exception('Failed to store standardized test: ${response.body}');
     }
   }
   
-  // Get My Results
-  static Future<List<Map<String, dynamic>>> getMyResults() async {
+  // Store Psychological Assessment
+  static Future<Map<String, dynamic>> storePsychologicalAssessment({
+    required DateTime assessmentDate,
+    required Map<String, dynamic> mentalToughness,
+    required Map<String, dynamic> competitiveAnxiety,
+    required Map<String, dynamic> teamCohesion,
+    required Map<String, dynamic> mentalHealth,
+    required Map<String, dynamic> personalityTraits,
+    required Map<String, dynamic> motivationGoals,
+    required Map<String, dynamic> stressCoping,
+    required Map<String, dynamic> healthScreening,
+    required Map<String, dynamic> imageryAbility,
+    required Map<String, dynamic> reactionTime,
+    required Map<String, dynamic> determination,
+    required Map<String, dynamic> timeAnticipation,
+    required Map<String, dynamic> peripheralVision,
+    required Map<String, dynamic> attentionAlertness,
+    required Map<String, dynamic> sensorimotorTasks,
+    required Map<String, dynamic> balanceTests,
+    required Map<String, dynamic> psychomotorTasks,
+    required Map<String, dynamic> cognitiveTasks,
+    required Map<String, dynamic> performanceConsistency,
+  }) async {
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/athlete/tests/psychological'),
+      headers: AuthService.getAuthHeaders(),
+      body: jsonEncode({
+        'assessmentDate': assessmentDate.toIso8601String(),
+        'mentalToughness': mentalToughness,
+        'competitiveAnxiety': competitiveAnxiety,
+        'teamCohesion': teamCohesion,
+        'mentalHealth': mentalHealth,
+        'personalityTraits': personalityTraits,
+        'motivationGoals': motivationGoals,
+        'stressCoping': stressCoping,
+        'healthScreening': healthScreening,
+        'imageryAbility': imageryAbility,
+        'reactionTime': reactionTime,
+        'determination': determination,
+        'timeAnticipation': timeAnticipation,
+        'peripheralVision': peripheralVision,
+        'attentionAlertness': attentionAlertness,
+        'sensorimotorTasks': sensorimotorTasks,
+        'balanceTests': balanceTests,
+        'psychomotorTasks': psychomotorTasks,
+        'cognitiveTasks': cognitiveTasks,
+        'performanceConsistency': performanceConsistency,
+      }),
+    );
+    
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to store psychological assessment: ${response.body}');
+    }
+  }
+  
+  // Store Sport-Specific Test
+  static Future<Map<String, dynamic>> storeSportSpecificTest({
+    required DateTime testDate,
+    required Map<String, dynamic> testResults,
+  }) async {
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/athlete/tests/sport-specific'),
+      headers: AuthService.getAuthHeaders(),
+      body: jsonEncode({
+        'testDate': testDate.toIso8601String(),
+        'testResults': testResults,
+      }),
+    );
+    
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to store sport-specific test: ${response.body}');
+    }
+  }
+  
+  // Get Test History
+  static Future<Map<String, dynamic>> getTestHistory() async {
     final response = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/data/my-results'),
+      Uri.parse('${ApiConfig.baseUrl}/athlete/tests/history'),
       headers: AuthService.getAuthHeaders(),
     );
     
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return List<Map<String, dynamic>>.from(data['results']);
+      return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to fetch results: ${response.body}');
+      throw Exception('Failed to fetch test history: ${response.body}');
+    }
+  }
+}
+```
+
+### Leaderboard Service
+
+```dart
+// services/leaderboard_service.dart
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'auth_service.dart';
+
+class LeaderboardService {
+  // Get Leaderboard
+  static Future<Map<String, dynamic>> getLeaderboard() async {
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/athlete/leaderboard'),
+      headers: AuthService.getAuthHeaders(),
+    );
+    
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch leaderboard: ${response.body}');
     }
   }
 }
@@ -144,20 +276,14 @@ import 'auth_service.dart';
 
 class FeedbackService {
   // Get AI Feedback
-  static Future<String> getFeedback({
-    required Map<String, dynamic> performanceData,
-  }) async {
-    final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/feedback'),
+  static Future<Map<String, dynamic>> getFeedback() async {
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/athlete/feedback'),
       headers: AuthService.getAuthHeaders(),
-      body: jsonEncode({
-        'performanceData': performanceData,
-      }),
     );
     
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['feedback'];
+      return jsonDecode(response.body);
     } else {
       throw Exception('Failed to get feedback: ${response.body}');
     }
@@ -171,7 +297,7 @@ class FeedbackService {
 // screens/test_screen.dart
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../services/data_service.dart';
+import '../services/test_service.dart';
 import '../services/feedback_service.dart';
 
 class TestScreen extends StatefulWidget {
@@ -181,37 +307,54 @@ class TestScreen extends StatefulWidget {
 
 class _TestScreenState extends State<TestScreen> {
   bool _isLoading = false;
-  String? _feedback;
+  Map<String, dynamic>? _feedback;
   
-  // Example: Store Vertical Jump Test
-  Future<void> _storeVerticalJumpTest() async {
+  // Example: Store Standardized Test
+  Future<void> _storeStandardizedTest() async {
     setState(() => _isLoading = true);
     
     try {
-      // Store the test result
-      await DataService.storeTestResult(
-        testType: 'vertical_jump',
-        metrics: {
-          'height': 45.2,
-          'confidence': 0.95,
-          'timestamp': DateTime.now().toIso8601String(),
-          'attempts': 3,
-          'bestAttempt': 1,
+      await TestService.storeStandardizedTest(
+        testDate: DateTime.now(),
+        height: 180.5,
+        weight: 75.2,
+        sitAndReach: {
+          'value': 25.5,
+          'unit': 'cm'
+        },
+        standingVerticalJump: {
+          'value': 45.2,
+          'unit': 'cm'
+        },
+        standingBroadJump: {
+          'value': 2.8,
+          'unit': 'm'
+        },
+        medicineBallThrow: {
+          'value': 8.5,
+          'unit': 'm'
+        },
+        sprint30m: {
+          'value': 4.2,
+          'unit': 'seconds'
+        },
+        shuttleRun4x10m: {
+          'value': 12.5,
+          'unit': 'seconds'
+        },
+        situps: {
+          'count': 45,
+          'time': 60,
+          'unit': 'seconds'
+        },
+        run800m: {
+          'value': 180.5,
+          'unit': 'seconds'
         },
       );
       
       // Get AI feedback
-      final feedback = await FeedbackService.getFeedback(
-        performanceData: {
-          'testType': 'vertical_jump',
-          'metrics': {
-            'height': 45.2,
-            'previousBest': 42.1,
-            'improvement': 7.4,
-            'confidence': 0.95,
-          },
-        },
-      );
+      final feedback = await FeedbackService.getFeedback();
       
       setState(() {
         _feedback = feedback;
@@ -233,15 +376,23 @@ class _TestScreenState extends State<TestScreen> {
       body: Column(
         children: [
           ElevatedButton(
-            onPressed: _isLoading ? null : _storeVerticalJumpTest,
+            onPressed: _isLoading ? null : _storeStandardizedTest,
             child: _isLoading 
               ? CircularProgressIndicator() 
-              : Text('Perform Vertical Jump Test'),
+              : Text('Perform Standardized Test'),
           ),
           if (_feedback != null)
             Padding(
               padding: EdgeInsets.all(16),
-              child: Text(_feedback!),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('AI Feedback Report', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Overall Score: ${_feedback!['report']['overallScore']}'),
+                  Text('Strengths: ${_feedback!['report']['strengths'].join(', ')}'),
+                  Text('Recommendations: ${_feedback!['report']['recommendations'].join(', ')}'),
+                ],
+              ),
             ),
         ],
       ),
@@ -272,6 +423,29 @@ export interface ApiResponse<T> {
   message?: string;
   error?: string;
 }
+
+// Sport and Gender enums
+export enum Sport {
+  ARCHERY = 'ARCHERY',
+  ATHLETICS = 'ATHLETICS',
+  BOXING = 'BOXING',
+  CYCLING = 'CYCLING',
+  FENCING = 'FENCING',
+  HOCKEY = 'HOCKEY',
+  JUDO = 'JUDO',
+  ROWING = 'ROWING',
+  SWIMMING = 'SWIMMING',
+  SHOOTING = 'SHOOTING',
+  TABLE_TENNIS = 'TABLE_TENNIS',
+  WEIGHTLIFTING = 'WEIGHTLIFTING',
+  WRESTLING = 'WRESTLING'
+}
+
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER'
+}
 ```
 
 ### Authentication Service
@@ -283,9 +457,49 @@ import { API_CONFIG, ApiResponse } from '../config/api';
 class AuthService {
   private static token: string | null = null;
   
+  // Official Registration
+  static async registerOfficial({
+    firstName,
+    lastName,
+    email,
+    phone,
+    gender,
+    sport,
+    password,
+  }: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    gender: string;
+    sport: string;
+    password: string;
+  }): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/signup`, {
+      method: 'POST',
+      headers: API_CONFIG.headers,
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        phone,
+        gender,
+        sport,
+        password,
+      }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Registration failed');
+    }
+    
+    return await response.json();
+  }
+  
   // Official Login
   static async loginOfficial(email: string, password: string): Promise<string> {
-    const response = await fetch(`${API_CONFIG.baseUrl}/auth/official/signin`, {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/signin`, {
       method: 'POST',
       headers: API_CONFIG.headers,
       body: JSON.stringify({ email, password }),
@@ -320,63 +534,135 @@ class AuthService {
 export default AuthService;
 ```
 
-### Data Service
+### Athlete Management Service
 
 ```typescript
-// services/dataService.ts
+// services/athleteService.ts
 import { API_CONFIG } from '../config/api';
 import AuthService from './authService';
 
-export interface TestResult {
+export interface Athlete {
   id: string;
-  testType: string;
-  metrics: Record<string, any>;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  age: number;
+  gender: string;
+  sport: string;
   createdAt: string;
-  session: {
-    id: string;
-    athleteId: string;
-    athlete?: {
-      id: string;
-      name: string;
-      email: string;
-      age?: number;
-    };
+}
+
+export interface TestHistory {
+  standardized: {
+    count: number;
+    latest: any;
+    all: any[];
+  };
+  psychological: {
+    count: number;
+    latest: any;
+    all: any[];
+  };
+  sportSpecific: {
+    count: number;
+    latest: any;
+    all: any[];
   };
 }
 
-class DataService {
-  // Get All Results
-  static async getAllResults(): Promise<TestResult[]> {
-    const response = await fetch(`${API_CONFIG.baseUrl}/data/all`, {
+class AthleteService {
+  // Get All Athletes in Sport
+  static async getAllAthletes(): Promise<Athlete[]> {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/athletes`, {
       headers: AuthService.getAuthHeaders(),
     });
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch results');
+      throw new Error(error.message || 'Failed to fetch athletes');
     }
     
     const data = await response.json();
-    return data.results;
+    return data.athletes;
   }
   
-  // Get Athlete Results
-  static async getAthleteResults(athleteId: string): Promise<TestResult[]> {
-    const response = await fetch(`${API_CONFIG.baseUrl}/data/athlete/${athleteId}`, {
+  // Get All Test Results
+  static async getAllTestResults(): Promise<any> {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/athletes/tests`, {
       headers: AuthService.getAuthHeaders(),
     });
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch athlete results');
+      throw new Error(error.message || 'Failed to fetch test results');
+    }
+    
+    return await response.json();
+  }
+  
+  // Get Athlete Test History
+  static async getAthleteTestHistory(athleteId: string): Promise<TestHistory> {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/athletes/${athleteId}/tests`, {
+      headers: AuthService.getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch athlete test history');
     }
     
     const data = await response.json();
-    return data.results;
+    return data.testHistory;
   }
 }
 
-export default DataService;
+export default AthleteService;
+```
+
+### Leaderboard Service
+
+```typescript
+// services/leaderboardService.ts
+import { API_CONFIG } from '../config/api';
+import AuthService from './authService';
+
+export interface LeaderboardEntry {
+  athleteId: string;
+  firstName: string;
+  lastName: string;
+  sport: string;
+  standardizedScore: number;
+  psychologicalScore: number;
+  sportSpecificScore: number;
+  overallScore: number;
+  rank: number;
+  totalTests: number;
+}
+
+export interface LeaderboardCategory {
+  category: string;
+  entries: LeaderboardEntry[];
+}
+
+class LeaderboardService {
+  // Get Leaderboard
+  static async getLeaderboard(): Promise<LeaderboardCategory[]> {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/leaderboard`, {
+      headers: AuthService.getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch leaderboard');
+    }
+    
+    const data = await response.json();
+    return data.leaderboard;
+  }
+}
+
+export default LeaderboardService;
 ```
 
 ### Feedback Service
@@ -386,22 +672,70 @@ export default DataService;
 import { API_CONFIG } from '../config/api';
 import AuthService from './authService';
 
+export interface AIFeedbackReport {
+  athleteId: string;
+  athleteName: string;
+  sport: string;
+  reportDate: string;
+  overallScore: number;
+  strengths: string[];
+  weaknesses: string[];
+  recommendations: string[];
+  performanceTrends: {
+    standardized: string;
+    psychological: string;
+    sportSpecific: string;
+  };
+  detailedAnalysis: {
+    standardized: {
+      score: number;
+      analysis: string;
+      keyMetrics: Record<string, any>;
+    };
+    psychological: {
+      score: number;
+      analysis: string;
+      keyMetrics: Record<string, any>;
+    };
+    sportSpecific: {
+      score: number;
+      analysis: string;
+      keyMetrics: Record<string, any>;
+    };
+  };
+  nextSteps: string[];
+  motivationalMessage: string;
+}
+
 class FeedbackService {
-  // Get Official Feedback
-  static async getOfficialFeedback(performanceData: Record<string, any>): Promise<string> {
-    const response = await fetch(`${API_CONFIG.baseUrl}/feedback`, {
-      method: 'POST',
+  // Get AI Feedback for Specific Athlete
+  static async getAthleteFeedback(athleteId: string): Promise<AIFeedbackReport> {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/athletes/${athleteId}/feedback`, {
       headers: AuthService.getAuthHeaders(),
-      body: JSON.stringify({ performanceData }),
     });
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to get feedback');
+      throw new Error(error.message || 'Failed to get athlete feedback');
     }
     
     const data = await response.json();
-    return data.feedback;
+    return data.report;
+  }
+  
+  // Get AI Feedback for All Athletes
+  static async getAllAthletesFeedback(): Promise<AIFeedbackReport[]> {
+    const response = await fetch(`${API_CONFIG.baseUrl}/official/athletes/feedback`, {
+      headers: AuthService.getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to get all athletes feedback');
+    }
+    
+    const data = await response.json();
+    return data.reports;
   }
 }
 
@@ -413,44 +747,47 @@ export default FeedbackService;
 ```tsx
 // components/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
-import DataService, { TestResult } from '../services/dataService';
-import FeedbackService from '../services/feedbackService';
+import AthleteService, { Athlete } from '../services/athleteService';
+import LeaderboardService, { LeaderboardCategory } from '../services/leaderboardService';
+import FeedbackService, { AIFeedbackReport } from '../services/feedbackService';
 import AuthService from '../services/authService';
 
 const Dashboard: React.FC = () => {
-  const [results, setResults] = useState<TestResult[]>([]);
+  const [athletes, setAthletes] = useState<Athlete[]>([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardCategory[]>([]);
+  const [feedback, setFeedback] = useState<AIFeedbackReport[]>([]);
   const [loading, setLoading] = useState(true);
-  const [feedback, setFeedback] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<'athletes' | 'leaderboard' | 'feedback'>('athletes');
   
   useEffect(() => {
-    loadResults();
+    loadData();
   }, []);
   
-  const loadResults = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const data = await DataService.getAllResults();
-      setResults(data);
+      const [athletesData, leaderboardData] = await Promise.all([
+        AthleteService.getAllAthletes(),
+        LeaderboardService.getLeaderboard(),
+      ]);
+      setAthletes(athletesData);
+      setLeaderboard(leaderboardData);
     } catch (error) {
-      console.error('Failed to load results:', error);
+      console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
     }
   };
   
-  const getFeedback = async (result: TestResult) => {
+  const loadFeedback = async () => {
     try {
-      const feedbackText = await FeedbackService.getOfficialFeedback({
-        testType: result.testType,
-        metrics: {
-          ...result.metrics,
-          athleteName: result.session.athlete?.name,
-          athleteAge: result.session.athlete?.age,
-        },
-      });
-      setFeedback(feedbackText);
+      setLoading(true);
+      const feedbackData = await FeedbackService.getAllAthletesFeedback();
+      setFeedback(feedbackData);
     } catch (error) {
-      console.error('Failed to get feedback:', error);
+      console.error('Failed to load feedback:', error);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -462,23 +799,93 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       <h1>Performance Dashboard</h1>
       
-      <div className="results-grid">
-        {results.map((result) => (
-          <div key={result.id} className="result-card">
-            <h3>{result.testType.replace('_', ' ').toUpperCase()}</h3>
-            <p>Athlete: {result.session.athlete?.name}</p>
-            <p>Date: {new Date(result.createdAt).toLocaleDateString()}</p>
-            <button onClick={() => getFeedback(result)}>
-              Get AI Feedback
-            </button>
-          </div>
-        ))}
+      <div className="tabs">
+        <button 
+          className={activeTab === 'athletes' ? 'active' : ''}
+          onClick={() => setActiveTab('athletes')}
+        >
+          Athletes
+        </button>
+        <button 
+          className={activeTab === 'leaderboard' ? 'active' : ''}
+          onClick={() => setActiveTab('leaderboard')}
+        >
+          Leaderboard
+        </button>
+        <button 
+          className={activeTab === 'feedback' ? 'active' : ''}
+          onClick={() => {
+            setActiveTab('feedback');
+            loadFeedback();
+          }}
+        >
+          AI Feedback
+        </button>
       </div>
       
-      {feedback && (
+      {activeTab === 'athletes' && (
+        <div className="athletes-section">
+          <h2>Athletes ({athletes.length})</h2>
+          <div className="athletes-grid">
+            {athletes.map((athlete) => (
+              <div key={athlete.id} className="athlete-card">
+                <h3>{athlete.firstName} {athlete.lastName}</h3>
+                <p>Email: {athlete.email}</p>
+                <p>Sport: {athlete.sport}</p>
+                <p>Age: {athlete.age}</p>
+                <p>Gender: {athlete.gender}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {activeTab === 'leaderboard' && (
+        <div className="leaderboard-section">
+          <h2>Leaderboard</h2>
+          {leaderboard.map((category) => (
+            <div key={category.category} className="leaderboard-category">
+              <h3>{category.category.toUpperCase()}</h3>
+              <div className="leaderboard-entries">
+                {category.entries.map((entry) => (
+                  <div key={entry.athleteId} className="leaderboard-entry">
+                    <span className="rank">#{entry.rank}</span>
+                    <span className="name">{entry.firstName} {entry.lastName}</span>
+                    <span className="score">{entry.overallScore.toFixed(1)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {activeTab === 'feedback' && (
         <div className="feedback-section">
-          <h3>AI Feedback</h3>
-          <p>{feedback}</p>
+          <h2>AI Feedback Reports</h2>
+          {feedback.map((report) => (
+            <div key={report.athleteId} className="feedback-card">
+              <h3>{report.athleteName}</h3>
+              <p>Overall Score: {report.overallScore}</p>
+              <div className="strengths">
+                <h4>Strengths:</h4>
+                <ul>
+                  {report.strengths.map((strength, index) => (
+                    <li key={index}>{strength}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="recommendations">
+                <h4>Recommendations:</h4>
+                <ul>
+                  {report.recommendations.map((rec, index) => (
+                    <li key={index}>{rec}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="motivational">{report.motivationalMessage}</p>
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -522,6 +929,8 @@ class ApiErrorHandler {
           return 'Access denied. You do not have permission.';
         case 404:
           return 'Resource not found.';
+        case 409:
+          return 'Email or phone already exists.';
         case 500:
           return 'Server error. Please try again later.';
         default:
@@ -547,6 +956,8 @@ export const handleApiError = (error: any): string => {
         return 'Access denied. You do not have permission.';
       case 404:
         return 'Resource not found.';
+      case 409:
+        return 'Email or phone already exists.';
       case 500:
         return 'Server error. Please try again later.';
       default:
@@ -591,3 +1002,24 @@ The backend is configured to accept requests from:
 - **Token Management**: Store tokens securely and handle expiration
 - **Loading States**: Show loading indicators during API calls
 - **Offline Support**: Consider offline functionality for mobile app
+- **Data Validation**: Validate data on both client and server side
+- **Sport-Specific Logic**: Handle different sports and their specific test models
+- **Real-time Updates**: Consider WebSocket connections for real-time leaderboard updates
+
+## Supported Sports and Test Models
+
+When integrating sport-specific tests, use the appropriate test model based on the athlete's sport:
+
+- **Swimming**: `SwimmingTest` with stroke rate, efficiency, technique metrics
+- **Archery**: `ArcheryTest` with accuracy, consistency, focus metrics
+- **Boxing**: `BoxingTest` with punch power, speed, reaction time metrics
+- **Athletics**: `AthleticsTest` with track and field specific metrics
+- **Cycling**: `CyclingTest` with power, endurance, efficiency metrics
+- **Fencing**: `FencingTest` with reaction time, precision metrics
+- **Hockey**: `HockeyTest` with team coordination, speed metrics
+- **Judo**: `JudoTest` with strength, technique, balance metrics
+- **Rowing**: `RowingTest` with power, endurance, technique metrics
+- **Shooting**: `ShootingTest` with precision, stability, focus metrics
+- **Table Tennis**: `TableTennisTest` with reaction time, coordination metrics
+- **Weightlifting**: `WeightliftingTest` with strength, power, technique metrics
+- **Wrestling**: `WrestlingTest` with strength, endurance, technique metrics

@@ -9,8 +9,6 @@ const passport_jwt_1 = require("passport-jwt");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const client_1 = require("@repo/db/client");
 const config_1 = require("./config");
-// ---------- Local Strategies ----------
-// Athlete
 passport_1.default.use("athlete-local", new passport_local_1.Strategy({ usernameField: "email" }, async (email, password, done) => {
     try {
         const user = await client_1.prisma.athlete.findUnique({ where: { email } });
@@ -25,7 +23,6 @@ passport_1.default.use("athlete-local", new passport_local_1.Strategy({ username
         return done(err, false);
     }
 }));
-// Official
 passport_1.default.use("official-local", new passport_local_1.Strategy({ usernameField: "email" }, async (email, password, done) => {
     try {
         const user = await client_1.prisma.official.findUnique({ where: { email } });
@@ -40,7 +37,6 @@ passport_1.default.use("official-local", new passport_local_1.Strategy({ usernam
         return done(err, false);
     }
 }));
-// Athlete JWT
 passport_1.default.use("athlete-jwt", new passport_jwt_1.Strategy({
     jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: config_1.JWT_SECRET
@@ -55,7 +51,6 @@ passport_1.default.use("athlete-jwt", new passport_jwt_1.Strategy({
         return done(err, false);
     }
 }));
-// Official JWT
 passport_1.default.use("official-jwt", new passport_jwt_1.Strategy({
     jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: config_1.JWT_SECRET

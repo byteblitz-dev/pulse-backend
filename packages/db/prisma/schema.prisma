@@ -7,44 +7,315 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Sport {
+  ARCHERY
+  ATHLETICS
+  BOXING
+  CYCLING
+  FENCING
+  HOCKEY
+  JUDO
+  ROWING
+  SWIMMING
+  SHOOTING
+  TABLE_TENNIS
+  WEIGHTLIFTING
+  WRESTLING
+}
+
+
 model Athlete {
   id            String       @id @default(cuid())
-  name          String
+  firstName     String
+  lastName      String
   email         String       @unique
-  age           Int?
+  phone         String       @unique
+  dateOfBirth   DateTime
+  age           Int          
+  gender        Gender       
+  sport         Sport        
   passwordHash  String
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  sessions      Session[]
+  standardizedTests          StandardizedTest[]
+  psychologicalAssessments   PsychologicalAssessment[]
+  
+  archeryTests               ArcheryTest[]
+  athleticsTests             AthleticsTest[]
+  boxingTests                BoxingTest[]
+  cyclingTests               CyclingTest[]
+  fencingTests               FencingTest[]
+  hockeyTests                HockeyTest[]
+  judoTests                  JudoTest[]
+  rowingTests                RowingTest[]
+  swimmingTests              SwimmingTest[]
+  shootingTests              ShootingTest[]
+  tableTennisTests           TableTennisTest[]
+  weightliftingTests         WeightliftingTest[]
+  wrestlingTests             WrestlingTest[]
+
+  @@map("athletes")
 }
 
 model Official {
   id            String       @id @default(cuid())
-  name          String
+  firstName     String
+  lastName      String
   email         String       @unique
+  phone         String       @unique
+  gender        Gender 
+  sport         Sport        
   passwordHash  String
-  role          String       @default("official") 
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+
+  @@map("officials")
 }
 
-model Session {
-  id         String       @id @default(cuid())
-  athleteId  String
-  athlete    Athlete      @relation(fields: [athleteId], references: [id])
-  createdAt  DateTime     @default(now())
+model StandardizedTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  height      Float     
+  weight      Float     
+  sitAndReach  Json     
+  standingVerticalJump Json
+  standingBroadJump    Json
+  medicineBallThrow    Json
+  sprint30m            Json
+  shuttleRun4x10m      Json
+  situps               Json
+  run800m              Json? 
+  run1600m             Json? 
+  createdAt   DateTime  @default(now())
 
-  results    TestResult[]
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("standardized_tests")
 }
 
-model TestResult {
-  id         String   @id @default(cuid())
-  sessionId  String
-  session    Session  @relation(fields: [sessionId], references: [id])
+model PsychologicalAssessment {
+  id              String    @id @default(cuid())
+  athleteId       String
+  assessmentDate  DateTime
+  mentalToughness     Json      
+  competitiveAnxiety  Json      
+  teamCohesion        Json      
+  mentalHealth        Json      
+  personalityTraits   Json      
+  motivationGoals     Json      
+  stressCoping        Json      
+  healthScreening     Json      
+  imageryAbility      Json      
+  reactionTime        Json      
+  determination       Json      
+  timeAnticipation    Json      
+  peripheralVision    Json      
+  attentionAlertness  Json      
+  sensorimotorTasks   Json      
+  balanceTests        Json      
+  psychomotorTasks    Json      
+  cognitiveTasks      Json      
+  performanceConsistency Json   
+  createdAt       DateTime  @default(now())
 
-  testType   String   
-  metrics    Json    
+  athlete         Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime @default(now())
+  @@index([athleteId, assessmentDate])
+  @@index([assessmentDate])
+  @@map("psychological_assessments")
 }
+
+model SwimmingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("swimming_tests")
+}
+
+model TableTennisTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("table_tennis_tests")
+}
+
+model ArcheryTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults     Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("archery_tests")
+}
+
+model AthleticsTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("athletics_tests")
+}
+
+model BoxingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("boxing_tests")
+}
+
+model CyclingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("cycling_tests")
+}
+
+model FencingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("fencing_tests")
+}
+
+model HockeyTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("hockey_tests")
+}
+
+model JudoTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("judo_tests")
+}
+
+model RowingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("rowing_tests")
+}
+
+model ShootingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("shooting_tests")
+}
+
+model WeightliftingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("weightlifting_tests")
+}
+
+model WrestlingTest {
+  id          String    @id @default(cuid())
+  athleteId   String
+  testDate    DateTime
+  testResults Json     
+  createdAt   DateTime  @default(now())
+
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, testDate])
+  @@index([testDate])
+  @@map("wrestling_tests")
+}
+
+

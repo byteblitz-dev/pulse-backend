@@ -1,4 +1,4 @@
-# 🚀 Railway Deployment Guide
+# Railway Deployment Guide
 
 Complete guide for deploying the Pulse Backend to Railway.
 
@@ -64,8 +64,8 @@ Railway will automatically detect the configuration from `railway.json`:
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd apps/backend && npm run start",
-    "buildCommand": "cd apps/backend && npm run build",
+    "startCommand": "cd apps/backend && pnpm start",
+    "buildCommand": "cd apps/backend && pnpm build",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",
@@ -80,8 +80,8 @@ If Railway doesn't auto-detect your configuration:
 
 1. Go to your service settings
 2. Set the following:
-   - **Build Command**: `cd apps/backend && npm run build`
-   - **Start Command**: `cd apps/backend && npm run start`
+   - **Build Command**: `cd apps/backend && pnpm build`
+   - **Start Command**: `cd apps/backend && pnpm start`
    - **Health Check Path**: `/health`
 
 ## Step 5: Deploy
@@ -115,8 +115,8 @@ railway login
 railway link
 
 # Run migrations
-railway run --service backend "cd packages/db && npx prisma migrate deploy"
-railway run --service backend "cd packages/db && npx prisma generate"
+railway run --service backend "cd packages/db && pnpm prisma migrate deploy"
+railway run --service backend "cd packages/db && pnpm prisma generate"
 ```
 
 ## Step 7: Verify Deployment
@@ -141,13 +141,31 @@ curl https://backend-production-e915.up.railway.app/health
 
 ```bash
 # Test athlete registration
-curl -X POST https://backend-production-e915.up.railway.app/auth/athlete/signup \
+curl -X POST https://backend-production-e915.up.railway.app/athlete/signup \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Test User",
+    "firstName": "John",
+    "lastName": "Doe",
     "email": "test@example.com",
-    "password": "password123",
-    "age": 25
+    "phone": "+1234567890",
+    "dateOfBirth": "2000-01-15T00:00:00Z",
+    "age": 24,
+    "gender": "MALE",
+    "sport": "SWIMMING",
+    "password": "password123"
+  }'
+
+# Test official registration
+curl -X POST https://backend-production-e915.up.railway.app/official/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "email": "official@example.com",
+    "phone": "+1234567891",
+    "gender": "FEMALE",
+    "sport": "SWIMMING",
+    "password": "password123"
   }'
 ```
 
@@ -265,13 +283,14 @@ railway logs
 # - Ensure all dependencies are in package.json
 # - Check for TypeScript errors
 # - Verify build commands
+# - Ensure pnpm is available in build environment
 ```
 
 #### 2. Database Connection Issues
 
 ```bash
 # Test database connection
-railway run --service backend "cd packages/db && npx prisma db pull"
+railway run --service backend "cd packages/db && pnpm prisma db pull"
 
 # Check DATABASE_URL
 railway variables
@@ -285,6 +304,7 @@ railway variables
 
 # Set missing variables
 railway variables set JWT_SECRET=your-secret-here
+railway variables set OPENAI_API_KEY=your-openai-key-here
 ```
 
 #### 4. CORS Issues
@@ -297,6 +317,16 @@ railway variables get FRONTEND_URL
 railway variables set FRONTEND_URL=https://your-frontend-domain.com
 ```
 
+#### 5. Prisma Client Issues
+
+```bash
+# Regenerate Prisma client
+railway run --service backend "cd packages/db && pnpm prisma generate"
+
+# Check Prisma schema
+railway run --service backend "cd packages/db && pnpm prisma validate"
+```
+
 ### Debugging Commands
 
 ```bash
@@ -305,9 +335,13 @@ railway shell
 
 # Run commands in production environment
 railway run --service backend "node --version"
+railway run --service backend "pnpm --version"
 
 # Check environment variables
 railway run --service backend "env | grep DATABASE_URL"
+
+# Check Prisma status
+railway run --service backend "cd packages/db && pnpm prisma db push --preview-feature"
 ```
 
 ## Performance Optimization
@@ -316,9 +350,14 @@ railway run --service backend "env | grep DATABASE_URL"
 
 ```sql
 -- Add indexes for better performance
-CREATE INDEX idx_testresult_createdat ON "TestResult"("createdAt");
-CREATE INDEX idx_testresult_testtype ON "TestResult"("testType");
-CREATE INDEX idx_session_athleteid ON "Session"("athleteId");
+CREATE INDEX idx_athlete_sport ON "athletes"("sport");
+CREATE INDEX idx_athlete_email ON "athletes"("email");
+CREATE INDEX idx_official_sport ON "officials"("sport");
+CREATE INDEX idx_official_email ON "officials"("email");
+CREATE INDEX idx_standardized_test_athleteid ON "standardized_tests"("athleteId");
+CREATE INDEX idx_standardized_test_testdate ON "standardized_tests"("testDate");
+CREATE INDEX idx_psychological_assessment_athleteid ON "psychological_assessments"("athleteId");
+CREATE INDEX idx_psychological_assessment_assessmentdate ON "psychological_assessments"("assessmentDate");
 ```
 
 ### Application Optimization
@@ -333,6 +372,16 @@ app.use((req, res, next) => {
   res.set('Cache-Control', 'public, max-age=300');
   next();
 });
+
+// Rate limiting
+import rateLimit from 'express-rate-limit';
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
+app.use(limiter);
 ```
 
 ## Backup and Recovery
@@ -372,13 +421,40 @@ railway variables > env_backup_$(date +%Y%m%d_%H%M%S).txt
 2. **Database Maintenance**
    ```bash
    # Run migrations
-   railway run --service backend "cd packages/db && npx prisma migrate deploy"
+   railway run --service backend "cd packages/db && pnpm prisma migrate deploy"
+   
+   # Generate Prisma client
+   railway run --service backend "cd packages/db && pnpm prisma generate"
    ```
 
 3. **Monitor Performance**
    - Check Railway dashboard metrics
    - Review application logs
    - Monitor database performance
+   - Check API response times
+
+### Database Schema Updates
+
+When updating the database schema:
+
+1. **Create Migration**
+   ```bash
+   # Local development
+   cd packages/db
+   pnpm prisma migrate dev --name your_migration_name
+   ```
+
+2. **Deploy Migration**
+   ```bash
+   # Production deployment
+   railway run --service backend "cd packages/db && pnpm prisma migrate deploy"
+   ```
+
+3. **Regenerate Client**
+   ```bash
+   # Regenerate Prisma client
+   railway run --service backend "cd packages/db && pnpm prisma generate"
+   ```
 
 ## Railway CLI Commands
 
@@ -424,7 +500,27 @@ railway connect postgres
 
 # View service metrics
 railway metrics
+
+# Run database commands
+railway run --service backend "cd packages/db && pnpm prisma studio"
 ```
+
+## Production Checklist
+
+Before deploying to production, ensure:
+
+- [ ] All environment variables are set
+- [ ] Database migrations are up to date
+- [ ] Prisma client is generated
+- [ ] OpenAI API key is valid
+- [ ] JWT secret is strong and secure
+- [ ] CORS is configured for your frontend domain
+- [ ] Health check endpoint is working
+- [ ] All API endpoints are tested
+- [ ] Error handling is implemented
+- [ ] Rate limiting is configured
+- [ ] Logging is properly configured
+- [ ] Database indexes are optimized
 
 ## Support and Resources
 
@@ -441,6 +537,24 @@ railway metrics
 - [Railway GitHub](https://github.com/railwayapp)
 - [Railway Status](https://status.railway.app)
 
+### Project-Specific Resources
+
+- [API Documentation](api-documentation.md)
+- [Database Schema](database-schema.md)
+- [Testing Guide](testing-guide.md)
+- [Frontend Integration](frontend-integration.md)
+
 ---
 
-**Your Pulse Backend is now deployed on Railway! 🚀**
+**Your Pulse Backend is now deployed on Railway!**
+
+The backend provides comprehensive athlete performance assessment APIs with:
+- Athlete and Official authentication
+- Standardized test storage and retrieval
+- Psychological assessment management
+- Sport-specific test models for 13 different sports
+- AI-powered feedback generation
+- Sport-based leaderboards
+- Role-based access control
+- Comprehensive error handling
+- Production-ready deployment

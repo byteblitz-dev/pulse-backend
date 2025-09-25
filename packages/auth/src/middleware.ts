@@ -1,4 +1,3 @@
-// packages/auth/src/middleware.ts
 import { Request, Response, NextFunction } from "express";
 import passport from "./passport";
 import type { Athlete, Official } from "@prisma/client";

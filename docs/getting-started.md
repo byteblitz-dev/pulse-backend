@@ -1,4 +1,4 @@
-# 🚀 Getting Started
+# Getting Started
 
 This guide will help you set up the Pulse Backend development environment.
 
@@ -86,7 +86,7 @@ pnpm dev
 
 The server will start at `http://localhost:4000`
 
-## 🌐 Production Backend
+## Production Backend
 
 The backend is deployed and available at: **https://backend-production-e915.up.railway.app**
 
